@@ -1,0 +1,117 @@
+[gd_scene load_steps=14 format=3 uid="uid://be23nti242kme"]
+
+[ext_resource type="Script" path="res://xr_origin_3d.gd" id="1_c18pr"]
+[ext_resource type="Script" path="res://xr_controller_3d_left.gd" id="2_ipoc5"]
+[ext_resource type="Script" path="res://xr_controller_3d_right.gd" id="2_n2py7"]
+[ext_resource type="Material" uid="uid://bqgifgru6thda" path="res://Wall_Textures/ceiling.tres" id="4_3ji15"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_de20e"]
+top_radius = 0.01
+bottom_radius = 0.01
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_wnvcl"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_2wjda"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_vmomm"]
+size = Vector3(12, 1, 12)
+
+[sub_resource type="BoxMesh" id="BoxMesh_841e2"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ngaq4"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_5p54c"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gur8j"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_bcxio"]
+
+[node name="World In Miniature" type="Node3D"]
+
+[node name="XROrigin3D" type="XROrigin3D" parent="." node_paths=PackedStringArray("xr_camera", "left_controller", "right_controller")]
+current = true
+script = ExtResource("1_c18pr")
+xr_camera = NodePath("XRCamera3D")
+left_controller = NodePath("XRController3DLeft")
+right_controller = NodePath("XRController3DRight")
+
+[node name="XRCamera3D" type="XRCamera3D" parent="XROrigin3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.479, 3.752)
+
+[node name="XRController3DLeft" type="XRController3D" parent="XROrigin3D" node_paths=PackedStringArray("World")]
+tracker = &"left_hand"
+script = ExtResource("2_ipoc5")
+World = NodePath("../../World")
+
+[node name="XRController3DRight" type="XRController3D" parent="XROrigin3D" node_paths=PackedStringArray("XROrigin", "XRCamera", "RayCast", "Holder")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0.3, 1.69119)
+tracker = &"right_hand"
+script = ExtResource("2_n2py7")
+XROrigin = NodePath("..")
+XRCamera = NodePath("../XRCamera3D")
+RayCast = NodePath("RayCast3D")
+Holder = NodePath("MeshInstance3D")
+move_speed = 2.0
+
+[node name="RayCast3D" type="RayCast3D" parent="XROrigin3D/XRController3DRight"]
+transform = Transform3D(2, 0, 0, 0, -8.74228e-08, 2, 0, -2, -8.74228e-08, 0, 0, 0)
+target_position = Vector3(0, 1.5, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="XROrigin3D/XRController3DRight"]
+transform = Transform3D(1.5, 0, 0, 0, -6.55671e-08, -1.5, 0, 1.5, -6.55671e-08, 0, 0, -1.5)
+mesh = SubResource("CylinderMesh_de20e")
+
+[node name="Holder" type="Node3D" parent="XROrigin3D/XRController3DRight"]
+
+[node name="Static" type="Node3D" parent="."]
+
+[node name="Light1" type="Node3D" parent="Static"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.266, -2)
+
+[node name="Bulb Structure" type="Node3D" parent="Static/Light1"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Static/Light1/Bulb Structure"]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 0, 0.22, 0)
+mesh = SubResource("CapsuleMesh_wnvcl")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="Static/Light1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.615, 0)
+light_energy = 2.502
+light_specular = 0.356
+
+[node name="World" type="Node3D" parent="."]
+
+[node name="Floor" type="StaticBody3D" parent="World"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="World/Floor"]
+transform = Transform3D(6, 0, 0, 0, 6, 0, 0, 0, 6, 0, 0, 0)
+mesh = SubResource("PlaneMesh_2wjda")
+surface_material_override/0 = ExtResource("4_3ji15")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="World/Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+shape = SubResource("BoxShape3D_vmomm")
+
+[node name="Table" type="StaticBody3D" parent="World"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.137, 0.536, 1.71901)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="World/Table"]
+mesh = SubResource("BoxMesh_841e2")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="World/Table"]
+shape = SubResource("BoxShape3D_ngaq4")
+
+[node name="Book" type="RigidBody3D" parent="World"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.105811, 2.53312)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="World/Book"]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)
+mesh = SubResource("BoxMesh_5p54c")
+surface_material_override/0 = SubResource("StandardMaterial3D_gur8j")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="World/Book"]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)
+shape = SubResource("BoxShape3D_bcxio")
+
+[connection signal="button_pressed" from="XROrigin3D/XRController3DRight" to="XROrigin3D/XRController3DRight" method="_on_xr_controller_3d_right_button_pressed"]
+[connection signal="button_released" from="XROrigin3D/XRController3DRight" to="XROrigin3D/XRController3DRight" method="_on_xr_controller_3d_right_button_released"]
