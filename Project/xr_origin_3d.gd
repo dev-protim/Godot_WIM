@@ -44,7 +44,6 @@ func update_virtual_controllers():
 		right_controller.global_transform = xr_camera.global_transform.translated(right_offset.rotated(Vector3.UP, deg_to_rad(xr_camera.rotation_degrees.y)))
 
 
-# Called when the node enters the scene tree for the first time.
 func _ready():
 	
 	print('Hello World')
